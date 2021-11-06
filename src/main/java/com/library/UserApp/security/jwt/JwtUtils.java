@@ -1,5 +1,6 @@
 package com.library.UserApp.security.jwt;
 
+import com.library.UserApp.exception.JwtAuthException;
 import com.library.UserApp.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
@@ -30,23 +31,26 @@ public class JwtUtils {
                 .compact();
     }
 
-    public boolean validateJwtToken(String authToken) {
+    public boolean validateJwtToken(String authToken) throws JwtAuthException {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
-            logger.error("Invalid JWT signature: {}", e.getMessage());
+            logger.error(e.getMessage());
+            throw new JwtAuthException("Invalid JWT signature: "+ e.getMessage(), e);
         } catch (MalformedJwtException e) {
-            logger.error("Invalid JWT token: {}", e.getMessage());
+            logger.error(e.getMessage());
+            throw new JwtAuthException("Invalid JWT token: "+ e.getMessage(), e);
         } catch (ExpiredJwtException e) {
-            logger.error("JWT token is expired: {}", e.getMessage());
+            logger.error(e.getMessage());
+            throw new JwtAuthException("JWT token is expired: "+ e.getMessage(), e);
         } catch (UnsupportedJwtException e) {
-            logger.error("JWT token is unsupported: {}", e.getMessage());
+            logger.error(e.getMessage());
+            throw new JwtAuthException("JWT token is unsupported: "+ e.getMessage(), e);
         } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty: {}", e.getMessage());
+            logger.error(e.getMessage());
+            throw new JwtAuthException("JWT claims string is empty: "+ e.getMessage(), e);
         }
-
-        return false;
     }
 
     public String getUserNameFromJwtToken(String token) {

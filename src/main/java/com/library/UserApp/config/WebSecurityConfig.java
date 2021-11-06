@@ -55,19 +55,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         // We don't need CSRF for this example
         httpSecurity
-                .cors()
-                .and()
-                .csrf()
-                .disable()
+                .cors().and()
+                .csrf().disable()
                 .exceptionHandling()
-                .authenticationEntryPoint(unauthorizedHandler)
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/h2/**").permitAll()
-                .antMatchers("/api/test/**").permitAll()
-                .anyRequest().authenticated();
+                .authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests().antMatchers("/**").permitAll();
 
         httpSecurity.headers().frameOptions().disable();
         // Add a filter to validate the tokens with every request

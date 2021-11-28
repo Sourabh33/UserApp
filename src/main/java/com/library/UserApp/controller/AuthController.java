@@ -3,6 +3,7 @@ package com.library.UserApp.controller;
 import com.library.UserApp.exception.JwtAuthException;
 import com.library.UserApp.model.ERole;
 import com.library.UserApp.model.User;
+import com.library.UserApp.payload.response.LoginMessageResponse;
 import com.library.UserApp.payload.response.MessageResponse;
 import com.library.UserApp.repository.UserRepository;
 import com.library.UserApp.security.services.AuthenticationService;
@@ -30,13 +31,13 @@ public class AuthController {
     @GetMapping("/validate")
     public ResponseEntity<?> checkJwtValidation(@RequestParam String accessToken) {
         try {
-            if(authenticationService.validateJwtToken(accessToken)) {
-                return ResponseEntity.ok(new MessageResponse("Valid"));
+            if (authenticationService.validateJwtToken(accessToken)) {
+                return ResponseEntity.ok(new MessageResponse("Valid", true));
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Invalid"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Invalid", false));
             }
         } catch (JwtAuthException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse(e.getMessage()));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse(e.getMessage(), false));
         }
     }
 
@@ -44,9 +45,10 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@RequestParam String username, @RequestParam String password) {
         logger.info("login request: {}", username);
         try {
-            return ResponseEntity.ok(authenticationService.signInUser(username, password));
+            LoginMessageResponse response = new LoginMessageResponse("Logged in successfully", true, authenticationService.signInUser(username, password));
+            return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Invalid credentials"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginMessageResponse("Invalid credentials", false, null));
         }
     }
 
@@ -58,23 +60,23 @@ public class AuthController {
         if (userRepository.existsByUsername(username)) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    .body(new MessageResponse("Error: Username is already taken!", false));
         }
         if (userRepository.existsByEmail(email)) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+                    .body(new MessageResponse("Error: Email is already in use!", false));
         }
 
         try {
             User user = new User(username, email, password);
-            if(authenticationService.signUpUser(user, newRole)) {
-                return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+            if (authenticationService.signUpUser(user, newRole)) {
+                return ResponseEntity.ok(new MessageResponse("User registered successfully!", true));
             } else {
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Not able to register"));
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Not able to register", false));
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Not able to register"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Not able to register", false));
         }
 
     }

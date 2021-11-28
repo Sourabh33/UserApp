@@ -2,9 +2,19 @@ package com.library.UserApp.payload.response;
 
 public class MessageResponse {
     private String message;
+    private boolean isSuccess;
 
-    public MessageResponse(String message) {
+    public boolean isSuccess() {
+        return isSuccess;
+    }
+
+    public void setSuccess(boolean success) {
+        isSuccess = success;
+    }
+
+    public MessageResponse(String message, boolean isSuccess) {
         this.message = message;
+        this.isSuccess = isSuccess;
     }
 
     public String getMessage() {

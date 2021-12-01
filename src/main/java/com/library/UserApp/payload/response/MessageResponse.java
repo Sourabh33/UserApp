@@ -4,13 +4,6 @@ public class MessageResponse {
     private String message;
     private boolean isSuccess;
 
-    public boolean isSuccess() {
-        return isSuccess;
-    }
-
-    public void setSuccess(boolean success) {
-        isSuccess = success;
-    }
 
     public MessageResponse(String message, boolean isSuccess) {
         this.message = message;
@@ -24,4 +17,13 @@ public class MessageResponse {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public boolean isSuccess() {
+        return isSuccess;
+    }
+
+    public void setSuccess(boolean success) {
+        isSuccess = success;
+    }
+
 }

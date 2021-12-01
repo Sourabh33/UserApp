@@ -103,6 +103,10 @@ public class AuthenticationService {
         }
     }
 
+    public List<User> getAllUserDetail() {
+        return userRepository.findAll();
+    }
+
     public boolean validateJwtToken(String jwt) throws JwtAuthException {
         String username = jwtUtils.getUserNameFromJwtToken(jwt);
         return userRepository.existsByUsername(username) && jwtUtils.validateJwtToken(jwt);

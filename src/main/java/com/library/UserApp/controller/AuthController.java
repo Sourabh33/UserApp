@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/auth")
@@ -27,6 +29,11 @@ public class AuthController {
 
     @Autowired
     private AuthenticationService authenticationService;
+
+    @GetMapping("/all-users")
+    public ResponseEntity<List<User>> getAllUserDetails() {
+        return ResponseEntity.ok(authenticationService.getAllUserDetail());
+    }
 
     @GetMapping("/validate")
     public ResponseEntity<?> checkJwtValidation(@RequestParam String accessToken) {

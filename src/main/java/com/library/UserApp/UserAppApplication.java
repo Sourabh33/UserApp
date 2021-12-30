@@ -10,6 +10,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,9 @@ public class UserAppApplication {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private PasswordEncoder encoder;
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void loadData() {
@@ -41,7 +45,7 @@ public class UserAppApplication {
 		User user = new User();
 		user.setId(1L);
 		user.setUsername("Sourabh33");
-		user.setPassword("Sourabh123");
+		user.setPassword(encoder.encode("Sourabh@123"));
 		user.setEmail("sourabh33@gmail.com");
 		user.setRoles(Collections.singleton(new Role(ERole.ROLE_ADMIN)));
 
